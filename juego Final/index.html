@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="media/images/favicon.ico">
+  <title>Moon Invaders</title>
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+
+
+<!--La página web está básicamente estructurada en varios divs del mismo tamaño, todos posicionados de manera absoluta 
+con los mismos márgenes que se generan por javascript para que siempre estén en el centro de la pantalla. Para no tener que
+cargar el javascript haciendo hide() y show() a todos los divs cada vez que se quiere navegar por ellos, están organizados
+con distintos z-index para intentar reducir la llamada a estas funciones en la medida de lo posible.
+
+Todos los botones de los divs tienen dos eventos, uno onclick con la función específica que realice, ya sea navegar por los divs
+o cambiar valores dentro del bucle de juego principal, y otro onmouseover que maneja el sonido del botón, primero parando el sonido
+si ya estuviera sonando con una función propia que pausa el audio y lo restablece al inicio, y luego reproduciendolo de nuevo.-->
+
+<body>
+  <div id="animacion"></div> <!--Este div se utiliza para realizar la animación de explosión cuando el jefe muere. Como realizar animaciones con canvas se complica bastante, he optado por una aproximación en el html.-->
+  <div id="menu_sonido"><!--El menú de sonido que se encuentra siempre visible en la parte superior derecha-->
+    <input id="boton_aumentar_volumen" class="boton_volumen pulsar" type="button" value="+" onclick="subirVolumen()">
+    <input id="boton_reducir_volumen" class="boton_volumen pulsar" type="button" value="-" onclick="bajarVolumen()">
+    <input id="boton_silencio" class="control_volumen pulsar" type="button" value="" onclick="silenciar()">
+    <input id="numero_volumen" type="button" value="0"> <!--Este div solo se muestra cuando hay un cambio de volumen para que el usuario tenga una referencia visual del mismo-->
+  </div>
+
+  <div id="menu" class="pantalla"><!--El menú principal, lo primero que te encuentras al entrar en la web-->
+    <h3 id="titulo" class="girito">Moon Invaders</h3>
+    <input id="play" class="pulsar boton" type="button" value="JUGAR" onclick="jugar()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <input id="boton_configuracion" class="pulsar boton" type="button" value="DIFICULTAD" onclick="mostrarDificultad()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <input id="boton_instrucciones" class="pulsar boton" type="button" value="INSTRUCCIONES" onclick="mostrarInstrucciones()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+  </div>
+
+    <!--El selector de dificultad, el bucle jugable se reproduce de base en fácil pero puedes cambiarlo aquí. 
+    Inicialmente este div solo iba a saltar cuando le dieras a jugar, cosa que tiene más sentido, pero por recortes en el desarrollo
+    por limitaciones de tiempo, la pantalla de inicio quedaba demasiado vacía y tuve que mover este div fuera para llenar espacio.
+    
+    Cada botón de dificultad lleva asociado un div que explica las diferencias que se muestra mediante css cuando haces hover en dicho botón-->
+  <div id="selector_dificultad" class="pantalla"> 
+    <h3 id="titulo">Dificultad</h3>
+    <input id="cerrar" class="pulsar cerrar" type="button" value="X" onclick="menu()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <input id="easy" class="pulsar boton" type="button" value="Fácil" onclick="facil()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <input id="medium" class="pulsar boton" type="button" value="Normal" onclick="normal()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <input id="hard" class="pulsar boton" type="button" value="Dificil" onclick="dificil()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <div id="easy_text" class="dificultad_bubble mover">
+      <p>¡La dificultad más sencilla!</p>
+      <p><ul>
+        <li>Menos enemigos Tanques</li>
+        <li>Menos proyectiles</li>
+        <li>Proyectiles más lentos</li>
+        <li>Llega antes al jefe</li>
+      </ul></p>
+    </div>
+    <div id="medium_text" class="dificultad_bubble mover">
+      <p>¡Tal como Dios lo quiso!</p>
+      <p><ul>
+        <li>Más enemigos Tanques</li>
+        <li>Proyectiles más rapidos</li>
+        <li>El jefe no está lejos</li>
+        <li>Más proyectiles</li>
+      </ul></p>
+    </div>
+
+    <div id="hard_text" class="dificultad_bubble vibrar">
+      <p>¡Dificil-cultad aumentada!</p>
+      <p><ul>
+        <li>Muchos enemigos Tanques</li>
+        <li>Proyectiles muy rapidos</li>
+        <li>El jefe está lejos</li>
+        <li>Más++ proyectiles</li>
+      </ul></p>
+    </div>
+  </div>
+
+
+  <!--Las instrucciones del juego. Los botones de este div no son técnicamente botones, pero los he utilizado con un fin puramente estético.
+  Al igual que el panel de dificultad, al hacer hover en cada botón se muestra un div de texto-->
+  <div id="instrucciones" class="pantalla">
+    <h3 id="titulo">Tutorial</h3>
+    <input id="cerrar" class="pulsar cerrar" type="button" value="X" onclick="menu()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <input id="tutorial_up" class="boton" type="button" value="Tu Nave">
+    <input id="tutorial_mid" class="boton" type="button" value="Enemigos D:">
+    <input id="tutorial_down" class="boton" type="button" value="Mejoras">
+    <div id="tutorial_sound_text" class="tutorial_bubble_sound"> 
+      ¡Panel de sonido! <br> ¡El altavoz (tecla "m") silencia! <br> Los botones +/- (teclas ","/".") <br> controlan el volumen.
+    </div>   
+    <div id="tutorial_up_text" class="tutorial_bubble">
+      <table>
+        <tr>
+          <td><img src="media/images/jugador_sprite_og.png" width=40px height=40px></td>
+          <td class="text_table"> <p>¡Este eres tú!</p> Tu nave está equipada con miaujor tecnología del Megaimperio:</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/jugador_escudo_tutorial.png" width=40px height=40px></td>
+          <td class="text_table">¡Escudo de metal mullidito!</td>
+        </tr>
+        <tr>
+          <td colspan="2" class=text_table">Cambia de color cuando te golpean, tendrás que retirarte si te lo destruyen ¡cuidado si se pone rojo!.</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/pad_tutorial.png" width=40px height=40px></td>
+          <td class="text_table">¡Controles simplificados!</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="text_table">Usa las flechas del teclado incorporado en tu nave para navegar por el espacio. ¡Qué conveniente!</td>
+        </tr>
+      </table>  
+    </div>
+    <div id="tutorial_mid_text" class="tutorial_bubble">
+      <table>
+        <tr>
+          <td colspan="2" class="text_table center"> ¡Tus enemigos! <br> ¡Intentan  destuir la Luna!</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/masilla_sprite_og.png" width=50px height=50px></td>
+          <td class="text_table"> <p>¡Alien masilla!</p> El más común de tus enemigos.<br> Son unos flojuchos, los destruyes de un golpe.</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/tanque_sprite_og.png" width=50px height=60px></td>
+          <td class="text_table"><p>¡Alien tanque!</p> Tendrás que dispararle varias veces para destuirlo. <br> Dispara menos veces, pero cuando dispara...</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/boss_sprite.png" width=50px height=50px></td>
+          <td class="text_table"><p>¡El Jefe Alien!</p> Aparecerá tras derrotar a sus súbditos. ¡Ten cuidado!</td>
+        </tr>
+      </table>  
+      </ul></p>
+    </div>
+
+    <div id="tutorial_down_text" class="tutorial_bubble">
+      <table>
+        <tr>
+          <td colspan="2" class="text_table center"> Cuando derrotes enemigos, a veces dejarán caer las siguientes recompensas...</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/drop_bulletspeed.png" width=40px height=40px></td>
+          <td class="text_table"> <p>¡Dispara más veces!</p> Acumula esta mejora hasta 10 veces.</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/drop_bulletwidth.png" width=40px height=40px></td>
+          <td class="text_table"><p>¡Disparos más anchos!</p> Acumula esta mejora hasta 10 veces.</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/drop_heal.png" width=40px height=40px></td>
+          <td class="text_table"><p>¡Cúrate!</p> Tu escudo recupera 2 puntitos.</td>
+        </tr>
+        <tr>
+          <td><img src="media/images/drop_speedboost.png" width=40px height=40px></td>
+          <td class="text_table"><p>¡Corre!</p> Duplica tu velocidad durante 4 segundos.</td>
+        </tr>
+      </table>  
+    </div>
+  </div>
+
+  <!--Las pantallas de victoria y derrota se muestran al finalizar el juego. Son virtualmente idénticas y solo cambian el título.-->
+
+  <div id="pantalla_derrota" class="fin_de_juego pantalla">
+    <h3 id="titulo">Has perdido</h3>
+    <input id="cerrar" class="pulsar posicion_derrota_victoria" type="button" value="X" onclick="menu()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <div id="estadisticas_derrota" class="estadisticas"></div>
+  </div>
+
+  <div id="pantalla_victoria" class="fin_de_juego pantalla">
+    <h3 id="titulo">Has ganado</h3>
+    <input id="cerrar" class="pulsar posicion_derrota_victoria" type="button" value="X" onclick="menu()" onmousedown="stopAudio(boton_click_music);boton_click_music.play()">
+    <div id="estadisticas_victoria" class="estadisticas"></div>
+  </div>
+
+  <!--El juego propiamente dicho, al final del todo, con el z-index más bajo y un tamaño preestablecido-->
+
+  <canvas id="juegoCanvas" width="800" height="640"></canvas>
+  <script src="main.js"></script>
+</body>
+</html>

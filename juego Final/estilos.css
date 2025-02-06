@@ -1,0 +1,370 @@
+/* Los estilos de la web, organizados en un único fichero organizado de la siguiente manera:
+    -Los keyframes de las animaciones
+    -Los cambios sobre las etiquetas
+    -Los cambios sobre los id
+    -Los cambios sobre las clases
+    -Las clases de las animaciones
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap'); /*La fuente del juego, importada desde internet*/
+
+
+@keyframes mover{ /*Esta animación la uso en los textos del div dificultad para simular una especie de movimiento de "flotar"*/
+    0%{transform:translate(0,0)}
+    100%{transform:translate(-10px,5px)}
+}
+
+@keyframes desaparecer{/*Utilizada exclusivamente para el texto del volumen, me resulta más agradable que desaparezca en el tiempo a que se muestre durante 1s y desaparezca*/
+    0%{opacity:1}
+    100%{opacity:0}
+}
+
+@keyframes vibrar{/*Solo la utilizo en el texto "dificil" del div dificultad*/
+    0%{transform:rotate(3deg)}
+    100%{transform:rotate(0deg)}
+}
+
+canvas {
+    display: block;
+    margin: auto;
+    padding: auto;
+    border: 3px solid black;
+    border-radius:10%;
+    background-image: url("media/images/game_background.jpg");
+    background-repeat: no-repeat;
+    position: absolute;
+    z-index:1;
+  }
+
+body {
+    font-family: "Silkscreen", serif;
+    margin:0 !important;
+    padding: 0 !important;
+    background: url("media/images/html_background.jpg");
+    background-size: 100%;
+    min-height:100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+input{
+    font-family: "Silkscreen", serif;
+    font-size: 20px;
+    border: 3px solid grey;
+    background-color: ghostwhite;
+}
+
+td{
+    width:50px;
+    height:35px;
+    padding:7px 5px 5px 5px;
+}
+
+td p{
+    padding-bottom:-0px;
+    margin:5px;
+}
+
+tr:nth-child(2) td:nth-child(2) p{
+    color: orange;
+}
+
+tr:nth-child(3) td:nth-child(2) p{
+    color: purple;
+}
+
+tr:nth-child(4) td:nth-child(2) p{
+    color: green;
+}
+
+tr:nth-child(5) td:nth-child(2) p{
+    color: blue;
+}
+
+#menu {
+    z-index:5;
+}
+
+#instrucciones {
+    z-index:4;
+}
+
+#selector_dificultad {
+    z-index:3;
+}
+
+#pantalla_victoria{
+    display: none;
+    background: url("media/images/pantalla_victoria.gif");
+    background-repeat: no-repeat;
+    background-size: 800px 640px;
+}
+
+#pantalla_derrota{
+    display: none;
+    background: url("media/images/pantalla_victoria.gif");
+    background-repeat: no-repeat;
+    background-size: 800px 640px;
+}
+
+#animacion {
+    display:none;
+    position:absolute;
+    z-index:20;
+    width: 100px;
+    height: 100px;
+    background: url("media/images/boss_defeat.gif");
+    background-repeat: no-repeat;
+    background-size: 100px 100px;
+}
+
+#easy:hover ~ #easy_text{
+    display:block;
+    padding-top: 50px;
+    padding-left: 15px;
+}
+
+#medium:hover ~ #medium_text{
+    padding-top: 10px;
+    padding-left: 15px;
+    display:block;
+}
+
+#hard:hover ~ #hard_text{
+    padding-top: 10px;
+    padding-left: 15px;
+    display:block;
+}
+
+#easy_text{
+    background: url("media/images/tutorial_bubble_easy.png");
+    background-repeat: no-repeat;
+    background-size: 300px 200px;
+    margin:-330px 0px 0px 270px;
+}
+
+#medium_text{
+    background: url("media/images/tutorial_bubble_medium.png");
+    background-repeat: no-repeat;
+    background-size: 300px 200px;
+    margin:-370px 0px 0px 270px;
+}
+
+#hard_text{
+    background: url("media/images/tutorial_bubble_hard.png");
+    background-repeat: no-repeat;
+    background-size: 300px 200px;
+    margin:-270px 0px 0px 270px;
+}
+
+#titulo{
+    width:300px;
+    color:white;
+    font-size:25px;
+    text-decoration: underline;
+    margin:100px 50px 0px 20px;
+}
+
+#menu_sonido{
+    position:absolute;
+    z-index:10;
+}
+
+#boton_aumentar_volumen{
+    margin-left: -20px;
+}
+
+#boton_reducir_volumen{
+    margin-top: 20px;
+    margin-left: -20px;
+}
+
+#numero_volumen{
+    position: absolute;
+    margin-top: 40px;
+    margin-left: -36px;
+    width: 36px;
+    height: 24px;
+    font-size: 14px;
+    font-weight: 400;
+    padding:0;
+    opacity:0;
+}
+
+#tutorial_up_text{
+    background: url("media/images/tutorial_bubble_lg_up.png");
+    background-repeat: no-repeat;
+    background-size: 500px 450px;
+}
+
+#tutorial_up:hover ~ #tutorial_up_text{
+    display:block;
+}
+
+#tutorial_mid:hover ~ #tutorial_mid_text{
+    display:block;
+}
+
+#tutorial_down:hover ~ #tutorial_down_text{
+    display:block;
+}
+
+#tutorial_mid_text{
+    background: url("media/images/tutorial_bubble_lg_mid.png");
+    background-repeat: no-repeat;
+    background-size: 500px 450px;
+}
+
+#tutorial_down_text{
+    background: url("media/images/tutorial_bubble_lg_down.png");
+    background-repeat: no-repeat;
+    background-size: 500px 450px;
+}
+
+.pantalla{
+    display: block;
+    width: 800px;
+    height: 640px;
+    margin: auto;
+    padding: auto;
+    border: 3px solid white;
+    border-radius:10%;
+    background: url("media/images/menu_background.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+}
+
+
+.text_table{
+    width:270px;
+    font-size: 14px;
+}
+
+.control_volumen{
+    width:35px;
+    height:35px;
+    border-radius: 25%;
+    background: url("media/images/fondo_sonido.png");
+    background-color:ghostwhite;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    background-position: center;
+}
+
+.dificultad_bubble{
+    display:none;
+    position:absolute;
+    width:300px;
+    height:200px;
+    font-size: 14px;
+}
+
+.tutorial_bubble{
+    display:none;
+    position:absolute;
+    margin:-430px 0px 0px 230px;
+    width:550px;
+    height:500px;
+    font-size: 14px;
+    padding: 35px 0px 0px 105px;
+}
+
+.tutorial_bubble_sound{
+    display:block;
+    position:absolute;
+    background: url("media/images/tutorial_bubble_sm_sound.png");
+    background-repeat: no-repeat;
+    background-size: 350px 90px;
+    margin:-500px 0px 0px 400px;
+    padding:10px;
+    padding-left:-10px;
+    width:350px;
+    height:100px;
+    font-size: 12px;
+}
+
+.posicion_derrota_victoria{
+    position:absolute;
+    margin-left:260px;
+    margin-top:-30px;
+}
+
+.estadisticas{
+    margin-left:35px;
+    margin-top: 20px;
+    font-size: 18px;
+    width:800px;
+    height:400px;
+}
+
+.fin_de_juego {
+    display: block;
+    width: 800px;
+    height: 640px;
+    margin: auto;
+    padding: auto;
+    border: 3px solid white;
+    border-radius:10%;
+    position: absolute;
+    z-index:2;
+}
+
+.cerrar{
+    position:absolute;
+    margin: -30px 0px 0px 220px;
+}
+
+
+.boton{
+    display:block;
+    width: 200px;
+    height: 80px;
+    margin: 50px 50px 20px 20px;
+}
+
+.boton_volumen{
+    position:absolute;
+    width:15px;
+    height:15px;
+    border: 2px solid grey;
+    font-size: 9px;
+    font-weight: bold;
+    padding:0;
+}
+
+.pulsar{
+    transition-duration: 100ms;
+}
+
+.pulsar:hover{
+    background-color:lightgray;
+    transform: scale(1.1);
+}
+
+.pulsar:active{
+    background-color:darkgrey;
+    color:white;
+    transform: scale(1.05);
+}
+
+.center{
+    text-align: center;
+}
+
+.girito{
+    transition-duration:1000ms;
+}
+
+.girito:hover{
+    transform: rotate(360deg);
+}
+
+.mover{
+    animation: mover 1s ease-in-out infinite alternate;
+}
+
+.vibrar{    
+    animation: vibrar 0.1s ease-in-out infinite alternate;
+}
+
